@@ -5,11 +5,6 @@ on:
     branches: [main, master]
   workflow_dispatch:
 
-env:
-  AWS_REGION: ${{ vars.AWS_REGION }}
-  ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
-  ECS_CLUSTER: ${{ secrets.ECS_CLUSTER }}
-
 jobs:
   test:
     name: Test services
@@ -51,6 +46,12 @@ jobs:
     needs: test
     permissions:
       contents: read
+    env:
+      AWS_REGION: ${{ vars.AWS_REGION }}
+      ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+      ECS_CLUSTER: ${{ secrets.ECS_CLUSTER }}
+      ECS_SERVICE_A: ${{ secrets.ECS_SERVICE_A }}
+      ECS_SERVICE_B: ${{ secrets.ECS_SERVICE_B }}
 
     strategy:
       fail-fast: false
@@ -68,6 +69,14 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
+
+      - name: Validate deployment secrets
+        run: |
+          test -n "$AWS_REGION" || (echo "::error::Missing repository secret AWS_REGION" && exit 1)
+          test -n "$ECR_REPOSITORY" || (echo "::error::Missing repository secret ECR_REPOSITORY" && exit 1)
+          test -n "$ECS_CLUSTER" || (echo "::error::Missing repository secret ECS_CLUSTER" && exit 1)
+          test -n "$ECS_SERVICE_A" || (echo "::error::Missing repository secret ECS_SERVICE_A" && exit 1)
+          test -n "$ECS_SERVICE_B" || (echo "::error::Missing repository secret ECS_SERVICE_B" && exit 1)
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -107,9 +116,6 @@ jobs:
             ${{ steps.ecr-login.outputs.registry }}/${{ steps.image.outputs.repository }}:latest
 
       - name: Deploy ECS service
-        env:
-          ECS_SERVICE_A: ${{ secrets.ECS_SERVICE_A }}
-          ECS_SERVICE_B: ${{ secrets.ECS_SERVICE_B }}
         run: |
           ECS_SERVICE_VAR="${{ matrix.ecs_service_var }}"
           ECS_SERVICE="${!ECS_SERVICE_VAR}"
@@ -119,9 +125,6 @@ jobs:
             --force-new-deployment
 
       - name: Wait for ECS service stability
-        env:
-          ECS_SERVICE_A: ${{ secrets.ECS_SERVICE_A }}
-          ECS_SERVICE_B: ${{ secrets.ECS_SERVICE_B }}
         run: |
           ECS_SERVICE_VAR="${{ matrix.ecs_service_var }}"
           ECS_SERVICE="${!ECS_SERVICE_VAR}"
