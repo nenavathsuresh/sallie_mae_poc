@@ -52,6 +52,7 @@ jobs:
       ECS_CLUSTER: ${{ secrets.ECS_CLUSTER }}
       ECS_SERVICE_A: ${{ secrets.ECS_SERVICE_A }}
       ECS_SERVICE_B: ${{ secrets.ECS_SERVICE_B }}
+      
 
     strategy:
       fail-fast: false
