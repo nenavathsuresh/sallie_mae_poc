@@ -4,4 +4,6 @@ pydantic-settings
 psycopg[binary]
 SQLAlchemy
 pytest
-httpxemail-validator
+httpx
+email-validator
+
