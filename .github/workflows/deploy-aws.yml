@@ -6,9 +6,9 @@ on:
   workflow_dispatch:
 
 env:
-  AWS_REGION: ${{ vars.AWS_REGION || 'eu-north-1' }}
-  ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY || 'salliemae_repo' }}
-  ECS_CLUSTER: ${{ vars.ECS_CLUSTER || 'salliemae_cluster' }}
+  AWS_REGION: ${{ vars.AWS_REGION }}
+  ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+  ECS_CLUSTER: ${{ secrets.ECS_CLUSTER }}
 
 jobs:
   test:
@@ -108,8 +108,8 @@ jobs:
 
       - name: Deploy ECS service
         env:
-          ECS_SERVICE_A: ${{ vars.ECS_SERVICE_A || 'service-a' }}
-          ECS_SERVICE_B: ${{ vars.ECS_SERVICE_B || 'service-b' }}
+          ECS_SERVICE_A: ${{ secrets.ECS_SERVICE_A }}
+          ECS_SERVICE_B: ${{ secrets.ECS_SERVICE_B }}
         run: |
           ECS_SERVICE_VAR="${{ matrix.ecs_service_var }}"
           ECS_SERVICE="${!ECS_SERVICE_VAR}"
@@ -120,13 +120,12 @@ jobs:
 
       - name: Wait for ECS service stability
         env:
-          ECS_SERVICE_A: ${{ vars.ECS_SERVICE_A || 'service-a' }}
-          ECS_SERVICE_B: ${{ vars.ECS_SERVICE_B || 'service-b' }}
+          ECS_SERVICE_A: ${{ secrets.ECS_SERVICE_A }}
+          ECS_SERVICE_B: ${{ secrets.ECS_SERVICE_B }}
         run: |
           ECS_SERVICE_VAR="${{ matrix.ecs_service_var }}"
           ECS_SERVICE="${!ECS_SERVICE_VAR}"
           aws ecs wait services-stable \
             --cluster "${ECS_CLUSTER}" \
             --services "${ECS_SERVICE}"
-
 
