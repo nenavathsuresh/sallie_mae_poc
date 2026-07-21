@@ -2,13 +2,14 @@ from fastapi import FastAPI
 
 from app.api.routes import health, inventory, warehouses
 from app.core.config import settings
+SERVICE_PREFIX = "/service-b"
 
 
 app = FastAPI(title=settings.service_name)
 
-app.include_router(health.router, prefix="/health", tags=["health"])
-app.include_router(warehouses.router, prefix="/warehouses", tags=["warehouses"])
-app.include_router(inventory.router, prefix="/inventory", tags=["inventory"])
+app.include_router(health.router, prefix=f"{SERVICE_PREFIX}/health", tags=["health"])
+app.include_router(warehouses.router, prefix=f"{SERVICE_PREFIX}/warehouses", tags=["warehouses"])
+app.include_router(inventory.router, prefix=f"{SERVICE_PREFIX}/inventory", tags=["inventory"])
 
 
 @app.get("/")
