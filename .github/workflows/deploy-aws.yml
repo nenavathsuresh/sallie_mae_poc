@@ -124,11 +124,3 @@ jobs:
             --service "${ECS_SERVICE}" \
             --force-new-deployment
 
-      - name: Wait for ECS service stability
-        run: |
-          ECS_SERVICE_VAR="${{ matrix.ecs_service_var }}"
-          ECS_SERVICE="${!ECS_SERVICE_VAR}"
-          aws ecs wait services-stable \
-            --cluster "${ECS_CLUSTER}" \
-            --services "${ECS_SERVICE}"
-
