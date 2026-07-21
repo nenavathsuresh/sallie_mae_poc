@@ -2,7 +2,7 @@ from fastapi import FastAPI
 
 from app.api.routes import health, inventory, warehouses
 from app.core.config import settings
-SERVICE_PREFIX = "/service-b"
+SERVICE_PREFIX = f"/{settings.service_name}"
 
 
 app = FastAPI(title=settings.service_name)
