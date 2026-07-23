@@ -46,7 +46,7 @@ def update_user_by_email(
 
     return UserResponse.model_validate(user)
 
-@router.get("showrules")
+@router.get("/show-rules")
 def show_rules():
     try:
         rules = Smrules().show_rules()
