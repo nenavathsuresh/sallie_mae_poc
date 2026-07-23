@@ -6,4 +6,5 @@ SQLAlchemy
 pytest
 httpx
 email-validator
+requests
 

@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.schemas.user import UserResponse, UserUpdate
 from app.services.user_service import UserService
+from app.services.smrules import Smrules
 
 router = APIRouter()
 
@@ -44,3 +45,11 @@ def update_user_by_email(
         raise HTTPException(status_code=404, detail="User not found")
 
     return UserResponse.model_validate(user)
+
+@router.get("showrules")
+def show_rules():
+    try:
+        rules = Smrules().show_rules()
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+    return rules
