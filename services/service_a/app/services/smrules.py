@@ -1,4 +1,4 @@
-from utils.helper import get_rules
+from app.utils.helper import get_rules
 class Smrules:
     def __init__(self) -> None:
         self.repository = None
